@@ -35,6 +35,7 @@ pipeline {
                 script {
                     // Split the server list and deploy to each server
                     def servers = env.TOMCAT_SERVERS.split(',')
+
                     for (server in servers) {
                         sh """
                             curl --fail --silent --show-error --upload-file ${WAR_FILE} \
