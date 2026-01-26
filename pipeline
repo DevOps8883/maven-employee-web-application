@@ -3,7 +3,8 @@ pipeline {
 
     environment {
         // Define sensitive data securely using Jenkins credentials
-        TOMCAT_URL = 'http://18.133.74.90:8080'
+        TOMCAT_URL = 'http://18.175.211.205:8080'
+        TOMCAT_URL = 'http://35.178.253.141:8080'
         DEPLOY_PATH = '/maven-employee-web-application'  // Change this to your app context path
         WAR_FILE = 'target/maven-employee-web-application.war'
     }
@@ -36,7 +37,22 @@ pipeline {
                 script {
                     def warFile = sh(script: "ls target/*.war", returnStdout: true).trim()
                     sh """
-                     curl --upload-file target/*.war "http://admin:admin123@18.133.74.90:8080/manager/text/deploy?path=/maven-employee-web-application&update=true"
+                     curl --upload-file target/*.war "http://admin:admin123@18.175.211.205:8080/manager/text/deploy?path=/maven-employee-web-application&update=true"
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Tomcat') {
+            environment {
+                // Fetch Jenkins credentials securely
+                TOMCAT_CRED = credentials('tomcat-manager-creds') // Jenkins credentials ID
+            }
+            steps {
+                script {
+                    def warFile = sh(script: "ls target/*.war", returnStdout: true).trim()
+                    sh """
+                     curl --upload-file target/*.war "http://admin:admin123@35.178.253.141:8080/manager/text/deploy?path=/maven-employee-web-application&update=true"
                     """
                 }
             }
