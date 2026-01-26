@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    environment {
+        WAR_FILE = 'target/maven-employee-web-application.war'
+        // Tomcat servers list
+        TOMCAT_SERVERS = "18.175.211.205,35.178.253.141"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git url: 'https://github.com/DevOps8883/maven-employee-web-application.git', branch: 'master'
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                sh 'mvn clean test'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                sh 'mvn package'
+            }
+        }
+
+        stage('Deploy to Tomcat Servers') {
+            environment {
+                // Fetch Jenkins credentials securely (username/password)
+                TOMCAT_CRED = credentials('tomcat-manager-creds')
+            }
+            steps {
+                script {
+                    // Split the server list and deploy to each server
+                    def servers = env.TOMCAT_SERVERS.split(',')
+                    for (server in servers) {
+                        sh """
+                            curl --fail --silent --show-error --upload-file ${WAR_FILE} \
+                            http://$admin:$admin123@${server}:8080/manager/text/deploy?path=/maven-employee-web-application&update=true
+                        """
+                        echo "Deployment to ${server} completed."
+                    }
+                }
+            }
+        }
+    }
+}
