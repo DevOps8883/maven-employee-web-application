@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         // Define sensitive data securely using Jenkins credentials
-        TOMCAT_URL = 'http://18.175.211.205:8080'
         TOMCAT_URL = 'http://35.178.253.141:8080'
         DEPLOY_PATH = '/maven-employee-web-application'  // Change this to your app context path
         WAR_FILE = 'target/maven-employee-web-application.war'
