@@ -38,7 +38,7 @@ pipeline {
                     for (server in servers) {
                         sh """
                             curl --fail --silent --show-error --upload-file ${WAR_FILE} \
-                            http://$admin:$admin123@${server}:8080/manager/text/deploy?path=/maven-employee-web-application&update=true
+                            http://${TOMCAT_CRED_USR}:${TOMCAT_CRED_PSW}@${server}:8080/manager/text/deploy?path=/maven-employee-web-application&update=true
                         """
                         echo "Deployment to ${server} completed."
                     }
